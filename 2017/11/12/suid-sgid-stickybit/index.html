@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="Kaifoon 的博客">
 <meta property="og:description" content="写在前面Linux的文件权限除了是r,w和x之外，还包括s和t这两个特殊权限，他们与系统账号和系统进程相关s这个标记可以出现在文件拥有者和文件所属组的x权限位上，分别称为Set UID 简称SUID，Set GID,简称 SGID SUID权限执行“ls -l /bin/su”后，看到su命令文件权限是“-rwsr-xr-x”,这就是SUID，拥有这样的功能：  suid仅对二进制程序有效 执行者">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-11-12T11:23:11.653Z">
+<meta property="og:updated_time" content="2017-11-12T11:29:37.759Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深入Linux文件权限之SUID SGID 粘滞位 理解使用">
 <meta name="twitter:description" content="写在前面Linux的文件权限除了是r,w和x之外，还包括s和t这两个特殊权限，他们与系统账号和系统进程相关s这个标记可以出现在文件拥有者和文件所属组的x权限位上，分别称为Set UID 简称SUID，Set GID,简称 SGID SUID权限执行“ls -l /bin/su”后，看到su命令文件权限是“-rwsr-xr-x”,这就是SUID，拥有这样的功能：  suid仅对二进制程序有效 执行者">
@@ -93,14 +93,18 @@
 <li>suid仅对二进制程序有效</li>
 <li>执行者对于该程序有x的执行权限</li>
 <li>执行权限仅在执行该程序有效</li>
-<li>执行者具有程序所有者的权限</li>
+<li><p>执行者具有程序所有者的权限</p>
+<p>su命令无论任何人执行后具有root权限，因为它的拥有者是root，只是这个权限在执行su时有效。这就是su命<br>令能够切换用户权限的实现原理<br>设置SUID的权限使用“u+s”来进行，SUID在Linux系统十分常见，那些需要提供给普通用户，但是需要root权<br>限才能正确执行程序都用SUID，比如passwd，mount等命令，也是实际用户和有效用户发生不一致的触发条件<br>。这样做没有违反系统安全意图，因为能够赋予SUID权限程序是经过谨慎设计的</p>
+</li>
 </ul>
-<p>su命令无论任何人执行后具有root权限，因为它的拥有者是root，只是这个权限在执行su时有效。这就是su命令能够切换用户权限的实现原理<br>设置SUID的权限使用“u+s”来进行，SUID在Linux系统十分常见，那些需要提供给普通用户，但是需要root权限才<br>能正确执行程序都用SUID，比如passwd，mount等命令，也是实际用户和有效用户发生不一致的触发条件。这样<br>做没有违反系统安全意图，因为能够赋予SUID权限程序是经过谨慎设计的</p>
 <h3 id="SGID权限"><a href="#SGID权限" class="headerlink" title="SGID权限"></a>SGID权限</h3><p>SGID举个典型命令就是/usr/bin/locate命令，他们的权限是‘-rws–s–x’，要设置SGID权限，可以使用“g+s”，<br>SGID权限是这样的：</p>
 <ul>
 <li>SGID仅对二进制程序有效</li>
 <li>执行者对程序有x的执行权限</li>
-<li>执行者执行过程中获得该程序所属组的支持<br>SGID 用在locate 命令上，是期望任何用户执行能够读取mlocate.db文件内容，位于/var/lib/mlocate/mlocate.db<br>它与locate命令有相同用户组，而且用户组有读权限，其他用户没有任何权限。<br>SGID除了用在二进制程序外，还能够用在目录上。当一个目录设置SGID权限后，具有以下功能：</li>
+<li>执行者执行过程中获得该程序所属组的支持</li>
+</ul>
+<p>SGID 用在locate 命令上，是期望任何用户执行能够读取mlocate.db文件内容，位于/var/lib/mlocate/mlocate.db<br>它与locate命令有相同用户组，而且用户组有读权限，其他用户没有任何权限。<br>SGID除了用在二进制程序外，还能够用在目录上。当一个目录设置SGID权限后，具有以下功能：</p>
+<ul>
 <li>用户若对于此目录拥有r与x权限时，用户能进入该目录</li>
 <li>该用户在此目录下有效用户组变成该目录的用户组</li>
 <li>若用户在此目录下有w权限，则用户创建的新文件的用户组与此用户组相同</li>
@@ -115,7 +119,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/11/12/suid-sgid-stickybit/" data-id="cj9wo8tcd0001ygn0r1ed8v89" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/11/12/suid-sgid-stickybit/" data-id="cj9woh137000102n0zdsxlpxn" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux文件权限/">Linux文件权限</a></li></ul>
