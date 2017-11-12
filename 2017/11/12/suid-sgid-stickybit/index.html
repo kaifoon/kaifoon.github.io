@@ -5,18 +5,18 @@
   
   <title>深入Linux文件权限之SUID SGID 粘滞位 理解使用 | Kaifoon 的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="写在前面 Linux的文件权限除了是r,w和x之外，还包括s和t这两个特殊权限，他们与系统账号和系统进程相关s这个标记可以出现在文件拥有者和文件所属组的x权限位上，分别称为Set UID 简称SUID，Set GID,简称 SGID  SUID权限执行“ls -l /bin/su”后，看到su命令文件权限是“-rwsr-xr-x”,这就是SUID，拥有这样的功能：  suid仅对二进制程序有效 执">
+  <meta name="description" content="写在前面Linux的文件权限除了是r,w和x之外，还包括s和t这两个特殊权限，他们与系统账号和系统进程相关s这个标记可以出现在文件拥有者和文件所属组的x权限位上，分别称为Set UID 简称SUID，Set GID,简称 SGID SUID权限执行“ls -l /bin/su”后，看到su命令文件权限是“-rwsr-xr-x”,这就是SUID，拥有这样的功能：  suid仅对二进制程序有效 执行者">
 <meta name="keywords" content="Linux文件权限,Linux">
 <meta property="og:type" content="article">
 <meta property="og:title" content="深入Linux文件权限之SUID SGID 粘滞位 理解使用">
 <meta property="og:url" content="http://yoursite.com/2017/11/12/suid-sgid-stickybit/index.html">
 <meta property="og:site_name" content="Kaifoon 的博客">
-<meta property="og:description" content="写在前面 Linux的文件权限除了是r,w和x之外，还包括s和t这两个特殊权限，他们与系统账号和系统进程相关s这个标记可以出现在文件拥有者和文件所属组的x权限位上，分别称为Set UID 简称SUID，Set GID,简称 SGID  SUID权限执行“ls -l /bin/su”后，看到su命令文件权限是“-rwsr-xr-x”,这就是SUID，拥有这样的功能：  suid仅对二进制程序有效 执">
+<meta property="og:description" content="写在前面Linux的文件权限除了是r,w和x之外，还包括s和t这两个特殊权限，他们与系统账号和系统进程相关s这个标记可以出现在文件拥有者和文件所属组的x权限位上，分别称为Set UID 简称SUID，Set GID,简称 SGID SUID权限执行“ls -l /bin/su”后，看到su命令文件权限是“-rwsr-xr-x”,这就是SUID，拥有这样的功能：  suid仅对二进制程序有效 执行者">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-11-12T11:12:09.861Z">
+<meta property="og:updated_time" content="2017-11-12T11:23:11.653Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深入Linux文件权限之SUID SGID 粘滞位 理解使用">
-<meta name="twitter:description" content="写在前面 Linux的文件权限除了是r,w和x之外，还包括s和t这两个特殊权限，他们与系统账号和系统进程相关s这个标记可以出现在文件拥有者和文件所属组的x权限位上，分别称为Set UID 简称SUID，Set GID,简称 SGID  SUID权限执行“ls -l /bin/su”后，看到su命令文件权限是“-rwsr-xr-x”,这就是SUID，拥有这样的功能：  suid仅对二进制程序有效 执">
+<meta name="twitter:description" content="写在前面Linux的文件权限除了是r,w和x之外，还包括s和t这两个特殊权限，他们与系统账号和系统进程相关s这个标记可以出现在文件拥有者和文件所属组的x权限位上，分别称为Set UID 简称SUID，Set GID,简称 SGID SUID权限执行“ls -l /bin/su”后，看到su命令文件权限是“-rwsr-xr-x”,这就是SUID，拥有这样的功能：  suid仅对二进制程序有效 执行者">
   
     <link rel="alternate" href="/atom.xml" title="Kaifoon 的博客" type="application/atom+xml">
   
@@ -87,9 +87,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><blockquote>
-<p>Linux的文件权限除了是r,w和x之外，还包括s和t这两个特殊权限，他们与系统账号和系统进程相关<br>s这个标记可以出现在文件拥有者和文件所属组的x权限位上，分别称为Set UID 简称SUID，Set GID,简称 SGID</p>
-</blockquote>
+        <h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>Linux的文件权限除了是r,w和x之外，还包括s和t这两个特殊权限，他们与系统账号和系统进程相关s这个标记<br>可以出现在文件拥有者和文件所属组的x权限位上，分别称为Set UID 简称SUID，Set GID,简称 SGID</p>
 <h3 id="SUID权限"><a href="#SUID权限" class="headerlink" title="SUID权限"></a>SUID权限</h3><p>执行“ls -l /bin/su”后，看到su命令文件权限是“-rwsr-xr-x”,这就是SUID，拥有这样的功能：</p>
 <ul>
 <li>suid仅对二进制程序有效</li>
@@ -117,7 +115,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/11/12/suid-sgid-stickybit/" data-id="cj9wnla7d0001srn0gy1zaf0i" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/11/12/suid-sgid-stickybit/" data-id="cj9wo8tcd0001ygn0r1ed8v89" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux文件权限/">Linux文件权限</a></li></ul>
