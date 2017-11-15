@@ -91,32 +91,25 @@
 <ul>
 <li>存放CA,Server,Client证书，密钥的目录或者文件本身没有读权限</li>
 <li>Selinux 禁止，可以在/etc/selinux/config 修改,从‘SELINUX=enforcing’修改为‘SELINUX=disabled’,或者setenforce 0</li>
-<li>证书本身格式不对,我就是犯这个错误。从openssl 1.0开始rsa 密钥默认是PKC8，openssl &lt;1.0 和yassl默认是PKC1，大家可以对比：<h3 id="PKC8"><a href="#PKC8" class="headerlink" title="PKC8"></a>PKC8</h3><code>-----BEGIN PRIVATE KEY-----</code> <h3 id="PKC1"><a href="#PKC1" class="headerlink" title="PKC1"></a>PKC1</h3><code>-----BEGIN RSA PRIVATE KEY-----</code><h1 id="追踪"><a href="#追踪" class="headerlink" title="追踪"></a>追踪</h1><code>db_master：mariadb10.1 debian 9.2
-db_slave:  mariadb10.1 centos7</code><br>db_master<br><code>MariaDB [(none)]&gt; show global variables like &#39;%ssl%&#39;;
-+---------------------+-------------+
-| Variable_name       | Value       |
-+---------------------+-------------+
-| have_openssl        | NO          |
-| have_ssl            | ENABLED     |
-| ssl_ca              |             |
-| ssl_capath          |             |
-| ssl_cert            |             |
-| ssl_cipher          |             |
-| ssl_crl             |             |
-| ssl_crlpath         |             |
-| ssl_key             |             |
-| version_ssl_library | YaSSL 2.4.2 |
-+---------------------+-------------+
-10 rows in set (0.00 sec)</code><br>db_slave<br>`</li>
+<li>证书本身格式不对,我就是犯这个错误。从openssl 1.0开始rsa 密钥默认是PKC8，openssl &lt;1.0 和yassl默认是PKC1，大家可以对比：<h3 id="PKC8"><a href="#PKC8" class="headerlink" title="PKC8"></a>PKC8</h3><code>-----BEGIN PRIVATE KEY-----</code> <h3 id="PKC1"><a href="#PKC1" class="headerlink" title="PKC1"></a>PKC1</h3><code>-----BEGIN RSA PRIVATE KEY-----</code><h2 id="追踪"><a href="#追踪" class="headerlink" title="追踪"></a>追踪</h2></li>
 </ul>
-<p>MariaDB [(none)]&gt; show global variables like ‘%ssl%’;<br>+———————+———————————–+<br>| Variable_name       | Value                             |<br>+———————+———————————–+<br>| have_openssl        | YES                               |<br>| have_ssl            | DISABLED                          |<br>| ssl_ca              | /etc/my.cnf.d/ssl/ca-cert.pem     |<br>  ssl_capath          |                                   |<br>▽ ssl_cert            | /etc/my.cnf.d/ssl/server-cert.pem |<br>| ssl_cipher          |                                   |<br>| ssl_crl             |                                   |<br>| ssl_crlpath         |                                   |<br>| ssl_key             | /etc/my.cnf.d/ssl/sever-key.pem   |<br>| version_ssl_library | OpenSSL 1.0.1e-fips 11 Feb 2013   |<br>+———————+———————————–+<br>10 rows in set (0.00 sec)<br>`<br>Master的用的YaSSL 2.4编译的，Google后发现debian默认用YaSSL编译mariadb ssl，yasssl2.2以上密钥是PKC1格式，openssl<br>1.0以上密钥是PKC8格式，所以我用slave连接master出现access denied错误</p>
+<p><code>dbmaster：mariadb10.1 debian 9.2
+dbslave:  mariadb10.1 centos7</code></p>
+<h2 id="dbmaster"><a href="#dbmaster" class="headerlink" title="dbmaster"></a>dbmaster</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">MariaDB [(none)]&gt; show global variables like &apos;%ssl%&apos;;</span><br><span class="line">+---------------------+-------------+</span><br><span class="line">| Variable_name       | Value       |</span><br><span class="line">+---------------------+-------------+</span><br><span class="line">| have_openssl        | NO          |</span><br><span class="line">| have_ssl            | ENABLED     |</span><br><span class="line">| ssl_ca              |             |</span><br><span class="line">| ssl_capath          |             |</span><br><span class="line">| ssl_cert            |             |</span><br><span class="line">| ssl_cipher          |             |</span><br><span class="line">| ssl_crl             |             |</span><br><span class="line">| ssl_crlpath         |             |</span><br><span class="line">| ssl_key             |             |</span><br><span class="line">| version_ssl_library | YaSSL 2.4.2 |</span><br><span class="line">+---------------------+-------------+</span><br><span class="line">10 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<h2 id="dbslave"><a href="#dbslave" class="headerlink" title="dbslave"></a>dbslave</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">MariaDB [(none)]&gt; show global variables like &apos;%ssl%&apos;;</span><br><span class="line">+---------------------+-----------------------------------+</span><br><span class="line">| Variable_name       | Value                             |</span><br><span class="line">+---------------------+-----------------------------------+</span><br><span class="line">| have_openssl        | YES                               |</span><br><span class="line">| have_ssl            | DISABLED                          |</span><br><span class="line">| ssl_ca              | /etc/my.cnf.d/ssl/ca-cert.pem     |</span><br><span class="line">  ssl_capath          |                                   |</span><br><span class="line">▽ ssl_cert            | /etc/my.cnf.d/ssl/server-cert.pem |</span><br><span class="line">| ssl_cipher          |                                   |</span><br><span class="line">| ssl_crl             |                                   |</span><br><span class="line">| ssl_crlpath         |                                   |</span><br><span class="line">| ssl_key             | /etc/my.cnf.d/ssl/sever-key.pem   |</span><br><span class="line">| version_ssl_library | OpenSSL 1.0.1e-fips 11 Feb 2013   |</span><br><span class="line">+---------------------+-----------------------------------+</span><br><span class="line">10 rows in set (0.00 sec)</span><br></pre></td></tr></table></figure>
+<p>Master的用的YaSSL 2.4编译的，Google后发现debian默认用YaSSL编译mariadb ssl，yasssl2.2以上密钥是PKC1格式，openssl<br>1.0以上密钥是PKC8格式，所以我用slave连接master出现access denied错误</p>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p> 从mariadb官方文档看到<code>version_ssl_library</code>是全局只读变量，不可更改。<code>have_openssl</code>是<code>YES</code>的话用的是OpenSSL,<code>have_ssl</code><br>是<code>ENABLED</code>的话用的是YaSSL，因为这两个都是根据SSL系统更改的，所以写入配置文件没用，只有更改某一系统ssl库。我得出解决方案：</p>
+<ul>
+<li>在Debian上 源代码编译时ssl库选项用openssl编译，或者反过来，这样的话更新比较麻烦</li>
+<li>主从系统发行版统一</li>
+</ul>
 <h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><h3 id="主从复制回顾"><a href="#主从复制回顾" class="headerlink" title="主从复制回顾"></a>主从复制回顾</h3><p><a href="https://www.cyberciti.biz/faq/how-to-setup-mariadb-ssl-and-secure-connections-from-clients/" target="_blank" rel="external">Mariadb SSL连接</a><br><a href="https://www.cyberciti.biz/faq/how-to-set-up-mariadb-master-slave-replication-with-ssl-on-ubuntu-linux/" target="_blank" rel="external">Mariadb 主从复制</a></p>
 <h3 id="openssl鼎鼎大名，debian为什么不用呢？"><a href="#openssl鼎鼎大名，debian为什么不用呢？" class="headerlink" title="openssl鼎鼎大名，debian为什么不用呢？"></a>openssl鼎鼎大名，debian为什么不用呢？</h3><p>我从debian的bug提交网页看到了<a href="https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=787118" target="_blank" rel="external">Debian不用OpenSSL答案</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/11/15/主从复制（SSL）一些问题/" data-id="cja0v30iz00026gn0o8zaykok" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/11/15/主从复制（SSL）一些问题/" data-id="cja0v7klf00027ln0jm9770zn" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MariaDB/">MariaDB</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSL/">SSL</a></li></ul>
@@ -182,7 +175,7 @@ db_slave:  mariadb10.1 centos7</code><br>db_master<br><code>MariaDB [(none)]&gt;
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/11/12/suid-sgid-stickybit/" data-id="cja0v30iw00016gn0xpk11bce" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/11/12/suid-sgid-stickybit/" data-id="cja0v7klb00017ln0inzhaefp" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux文件权限/">Linux文件权限</a></li></ul>
@@ -229,7 +222,7 @@ db_slave:  mariadb10.1 centos7</code><br>db_master<br><code>MariaDB [(none)]&gt;
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/11/12/hello-world/" data-id="cja0v30ip00006gn0dhe07epw" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/11/12/hello-world/" data-id="cja0v7kl400007ln0jqkkr1e8" class="article-share-link">Share</a>
       
       
     </footer>
